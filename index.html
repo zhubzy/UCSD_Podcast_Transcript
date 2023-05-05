@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Page Title Checker</title>
+  </head>
+  <body>
+    <h1>Enter a URL to check the page title</h1>
+    <form onsubmit="checkTitle(); return false;">
+      <input type="text" id="urlInput">
+      <button type="submit">Convert instantly</button>
+    </form>
+    <div id="result"></div>
+    
+    <script>
+      function checkTitle() {
+        const url = document.getElementById('urlInput').value;
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            const lines = html.split('\n');
+            let concatenatedText = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].match(/^\d/)) { // Check if the line starts with a number
+                const parts = lines[i].split(' --> '); // Split the line into start and end timestamps
+                
+                // Loop over the remaining lines until the next numbered line and concatenate the text
+                for (let j = i + 1; j < lines.length && !lines[j].match(/^\d/); j++) {
+                    concatenatedText += lines[j].trim() + ' ';
+                }
+                }
+            }
+            const resultDiv = document.getElementById('result');            
+            resultDiv.textContent = concatenatedText
+       
+          })
+          .catch(error => {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `Error: ${error}`;
+          });
+      }
+    </script>
+  </body>
+</html>
